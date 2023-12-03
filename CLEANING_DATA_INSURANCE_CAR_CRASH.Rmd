@@ -1,7 +1,7 @@
 ---
 title: "Cleaning_of_a_Car_Crash"
 author: "Makhmud Yuldoshev"
-date: "2023-12-02"
+date: "`r Sys.Date()`"
 output: html_document
 ---
 ## Background for this activity

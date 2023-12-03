@@ -1,0 +1,211 @@
+---
+title: "Cleaning_of_a_Car_Crash"
+author: "Makhmud Yuldoshev"
+date: "`r Sys.Date()`"
+output: html_document
+---
+## Background for this activity
+In this activity, we'll review a scenario, and focus on cleaning real data in R. You will learn more about data cleaning functions and perform basic calculations to gain initial insights into your data.
+
+## The scenario
+In this scenario, you are a junior data analyst working for a insurance company. We have been asked to clean a .csv file. In order to learn more about this data, you are going to need to use functions to preview the data's structure, including its columns and rows. You will also need to use basic cleaning functions to prepare this data for analysis.
+
+## STEP-1: Load packages
+In order to start cleaning your data, you will need to  by install the required packages. If you have already installed and loaded `tidyverse`, `skimr`, and `janitor` in this session, feel free to skip the code chunks in this step.
+```{r}
+install.packages("tidyverse")
+install.packages("skimr")
+install.packages("janitor")
+```
+
+Once a package is installed, you can load it by running the "library()" function with the package name inside the parentheses:
+```{r}
+library(tidyverse)
+library(skimr)
+library(janitor)
+library(tidyr)
+library(dplyr)
+```
+
+## STEP-2: Import data
+
+The data you have been asked to clean is currently an external .csv file. In order to view and clean it in 'R', we will need to import it.The tidyverse library 'readr' package has a number of functions for "reading in" or importing data, including .csv files.
+
+In the chunk below, we will see the read_csv() function to import data from github.
+```{r}
+insurance_data <- read.csv("https://raw.githubusercontent.com/Umerfarooq122/predicting-the-probability-that-a-person-will-crash-their-car-and-also-the-amount-cost/main/insurance_training_data.csv")
+```
+# DESCRIPTION:
+INDEX - 
+TARGET FLAG- Was Car in a crash? 1=YES O=NO
+TARGET AMT-If car was in a crash. what was the cost
+AGE-Age of Driver
+BLUEBOOK-Value of Vehicle
+CAR AGE-Vehicle Age
+CAR TYPE- Type of Car
+CAR USE-Vehicle Use
+CLM FREQ-# Claims (Past 5 Years)
+EDUCATION-Max Education Level
+HOMEKIDS-# Children at Home
+HOME VAL-Home Value
+INCOME-Income
+JOB-Job Category
+KIDSDRIV-# Driving Children
+MSTATUS-Marital Status
+MVR PTS-Motor Vehicle Record Points
+OLDCLAIM-(Total Claims (Past 5 Years)
+PARENT1-Single Parent
+RED CAR-A Red Car
+REVOKED-License Revoked (Past 7 Years)
+SEX-Gender
+TIF-Time in Force
+TRAVTIME-Distance to Work
+URBANICITY-Home/Work Area
+YOJ-Years on Job
+
+## STEP-3: Getting to know your data
+
+Before we start cleaning ouru data, take some time to explore it. We can use several functions, including head() function in the code chunk below:
+```{r}
+head(insurance_data)
+```
+
+We can also summarize or preview the data with the str() and glimpse() functions to get a better understanding of the data by running the code chunks below:
+```{r}
+str(insurance_data)
+```
+We have 8161 observations and 26 columns in our data set. 
+
+```{r}
+glimpse(insurance_data)
+```
+
+There is one more which is colnames() to check the names of the columns in our data set. 
+```{r}
+colnames(insurance_data)
+```
+
+Some packages contain more advanced funcitions for summarizing and exploring our data. One example is the 'skimr' package, which has a number of functions for this purpose. For example, the 'skim_without_charts()' function provides a detailed summary of the data. 
+```{r}
+skim_without_charts(insurance_data)
+```
+
+
+## STEP-4: Data Preparation
+
+First, we will convert those character data type variables into numeric
+```{r}
+library(readr)
+insurance_data$INCOME <- parse_number(insurance_data$INCOME)
+insurance_data$HOME_VAL <- parse_number(insurance_data$HOME_VAL)
+insurance_data$BLUEBOOK <- parse_number(insurance_data$BLUEBOOK)
+insurance_data$OLDCLAIM <- parse_number(insurance_data$OLDCLAIM)
+```
+
+We have changed INCOME, HOME_VAL, BLUEBOOK, and OLDCLAIM columns into numeric, then we set the other data types into 'factors'.
+```{r}
+insurance_data$PARENT1 <- as.factor(insurance_data$PARENT1)
+insurance_data$MSTATUS <- as.factor(insurance_data$MSTATUS)
+insurance_data$SEX <- as.factor(insurance_data$SEX)
+insurance_data$EDUCATION <- as.factor(insurance_data$EDUCATION)
+levels(insurance_data$EDUCATION) <- c('<High School','z_High School','Bachelors', 'Masters','PHD')
+insurance_data$CAR_USE <- as.factor(insurance_data$CAR_USE)
+insurance_data$CAR_TYPE <- as.factor(insurance_data$CAR_TYPE)
+insurance_data$RED_CAR <- as.factor(insurance_data$RED_CAR)
+insurance_data$REVOKED <- as.factor(insurance_data$REVOKED)
+insurance_data$URBANICITY <- as.factor(insurance_data$URBANICITY)
+insurance_data$JOB[insurance_data$JOB==""]<- NA
+insurance_data$JOB <- as.factor(insurance_data$JOB)
+insurance_data$TARGET_FLAG <- as.factor((insurance_data$TARGET_FLAG))
+```
+
+
+## STEP-5: Cleaning our data
+
+Before we clean the data, first of those columns is an index column and lets remove that from our data set.
+```{r}
+insurance_data <- insurance_data[-1]
+```
+Let's check again:
+```{r}
+head(insurance_data)
+```
+As you can see, our data starts from TARGET_FLAG not INDEX.
+Now, let's say you are primarily interested in the following variables: 'TARGET_FLAG', 'AGE' and 'SEX". Create a new data frame with just those columns, calling it 'trimmed_insur_df' by adding the variables names to this code chunk:
+```{r}
+library(dplyr)
+trimmed_insur_df <- insurance_data %>% select(TARGET_FLAG, AGE, SEX)
+print(trimmed_insur_df)
+```
+
+You might notice that some of the column names aren't very intuitive, so you will want to rename them to make easier to understand. You might want to create same exact data frame as above, but rename the variable 'SEX' to be named 'GENDER'. To rename, we use '=' equal symbol.
+```{r}
+trimmed_insur_df<- trimmed_insur_df %>% select(TARGET_FLAG, AGE, SEX) %>% rename(GENDER = SEX)
+print(trimmed_insur_df)
+```
+
+You can practice with this code chunk to improve your first data cleaning skills. Because sometimes you will get data with not clear column names, at that moment you can easily rename them as you want.
+Let's try select function one more time:
+select(everything(): selects all variables,
+       last_col():   selects furthest column on the right 
+       where(is.numeric): selects all variables where is.numeric() returns TRUE
+       starts_with("a"): names that start with "a".
+       ends_with("z"): names that end with "z".
+       contains("b"): names that contain "b".
+       matches("x.y"): names that match regular expression x.y.
+       num_range(x, 1:4): names following the pattern, x1, x2, ..., x4.)
+       all_of(vars)/any_of(vars): matches names stored in the character vector vars.                   all_of(vars) will error if the variables aren't present; any_of(var) will match just the        variables that exist.
+YOU CAN USE 
+```{r}
+select_func_prac<- insurance_data %>% select(everything())
+print(select_func_prac)
+```
+Code chunk above gives us new trimmed df which includes all variables inside. Try to another one which is select(starts_with(" "))
+```{r}
+select_func_prac_1<- insurance_data %>% select(starts_with("A"))
+print(select_func_prac_1)
+```
+
+When you want to select columns but you only know about their first and last alphabet of them. In this situation you use select(starts_with(" ")) and select(ends_with(" "))
+```{r}
+select_func_prac_2 <- insurance_data %>% select(starts_with("C")) %>% select(ends_with("E"))
+print(select_func_prac_2)
+```
+After run the code above, result will show you CAR_USE, CAR_TYPE, and CAR_AGE.
+
+Another common task is to either split or combine data in different columns. 
+In this example, we can split into two columns using the separate() function:
+```{r}
+split_func_insurance <- insurance_data %>% separate(URBANICITY, into=c("HIGHLY-z_HIGHLY","URBAN-RURAL"), sep = "/")
+print(split_func_insurance)
+```
+To reverse the data, we can use unite() function:
+```{r}
+unite_func_insurance <- split_func_insurance %>% 
+  unite(URBANICITY, c(`HIGHLY-z_HIGHLY`, `URBAN-RURAL`), sep = "/")
+print(unite_func_insurance)
+```
+
+## STEP-6: Another way of doing things
+
+We can also use mutate() function to make changes to our columns. Let's say you wanted to create a new column that subtract CAR_AGE from AGE to know how old they were when bought their car. To do this we need name a new column to OABNC - Owner Age when They Bought the New Car.
+```{r}
+mutate_func_insurance <- insurance_data %>% mutate(OABNC = AGE - CAR_AGE)
+print(mutate_func_insurance)
+```
+
+
+Good job!. Now it's time to calculate some summary statistics! Calculate the total number of 
+```{r}
+final_insurance <- insurance_data %>% 
+  summarize(number_of_crash = sum(CLM_FREQ),
+            number_of_points = sum(MVR_PTS))
+head(final_insurance)
+```
+```{r}
+summary_kids_older <- insurance_data %>% 
+  summarize(kids_driver = mean(KIDSDRIV),
+            older_driver = mean(AGE))
+print(summary_kids_older)
+mean(insurance_data$AGE)
+```

@@ -1,7 +1,7 @@
 ---
 title: "Cleaning_of_a_Car_Crash"
 author: "Makhmud Yuldoshev"
-date: "`r Sys.Date()`"
+date: "2023-12-02"
 output: html_document
 ---
 ## Background for this activity
@@ -32,8 +32,13 @@ library(dplyr)
 The data you have been asked to clean is currently an external .csv file. In order to view and clean it in 'R', we will need to import it.The tidyverse library 'readr' package has a number of functions for "reading in" or importing data, including .csv files.
 
 In the chunk below, we will see the read_csv() function to import data from github.
+# Specify the URL of the raw CSV file on GitHub
 ```{r}
-insurance_data <- read.csv("https://raw.githubusercontent.com/Umerfarooq122/predicting-the-probability-that-a-person-will-crash-their-car-and-also-the-amount-cost/main/insurance_training_data.csv")
+url <- "https://raw.githubusercontent.com/mahmud1995/Makhmud_Portfolio/main/insurance_training_data.csv"
+```
+# Read the CSV file from the URL
+```{r}
+insurance_data <- read.csv(url)
 ```
 # DESCRIPTION:
 INDEX - 
